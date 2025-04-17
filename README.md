@@ -21,9 +21,30 @@
    ```
 
 3. Run the Docker setup script:
+   
+   **For macOS/Linux:**
    ```bash
    chmod +x docker-setup.sh
    ./docker-setup.sh
+   ```
+   
+   **For Windows (PowerShell):**
+   ```powershell
+   # Option 1: If your execution policy allows script execution
+   .\docker-setup.sh
+   
+   # Option 2: If you prefer to run the commands directly
+   # Check if .env file exists, if not create from example
+   if (-not (Test-Path .env)) {
+     if (Test-Path .env.example) {
+       Copy-Item .env.example .env
+       Write-Output "Created .env file from .env.example"
+       Write-Output "Please edit .env file with your API keys and configuration"
+     }
+   }
+   
+   # Build and start the containers
+   docker-compose up --build -d
    ```
    
    This script will:
@@ -48,11 +69,22 @@
 
 1. Start the backend server:
 
+   **For macOS/Linux:**
    ```bash
    cd backend
    # Create a Python virtual environment (recommended)
    python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   python app.py
+   ```
+   
+   **For Windows:**
+   ```cmd
+   cd backend
+   # Create a Python virtual environment (recommended)
+   python -m venv .venv
+   .venv\Scripts\activate
    pip install -r requirements.txt
    python app.py
    ```
@@ -64,7 +96,7 @@
    npm run dev
    ```
 
-3. Or use the provided script to start both services:
+3. Or use the provided script to start both services (macOS/Linux only):
 
    ```bash
    chmod +x start_app.sh
