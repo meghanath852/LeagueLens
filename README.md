@@ -2,7 +2,7 @@
 
 ## Demo Videos
 
-[![Main Page and Chat Demo](https://img.youtube.com/vi/kz1UalbZqD4/0.jpg)](https://www.youtube.com/watch?v=kz1UalbZqD4 "Main Page and Chat Demo")
+[![Main Page and Chat Demo](https://i.ytimg.com/vi/kz1UalbZqD4/0.jpg)](https://www.youtube.com/watch?v=kz1UalbZqD4 "Main Page and Chat Demo")
 
 [![Commentary and Stats Demo](https://img.youtube.com/vi/1vWXb16vwnQ/0.jpg)](https://www.youtube.com/watch?v=1vWXb16vwnQ "Commentary and Stats Demo")
 
