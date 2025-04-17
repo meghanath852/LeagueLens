@@ -2,8 +2,10 @@
 
 ## Demo Videos
 
+### Main Page and Chat Demo
 [![Main Page and Chat Demo](https://i.ytimg.com/vi/kz1UalbZqD4/0.jpg)](https://www.youtube.com/watch?v=kz1UalbZqD4 "Main Page and Chat Demo")
 
+### Commentary and Stats Demo
 [![Commentary and Stats Demo](https://img.youtube.com/vi/YKD5knkQLbM/0.jpg)](https://www.youtube.com/watch?v=YKD5knkQLbM "Commentary and Stats Demo")
 
 ## Getting Started
