@@ -1,3 +1,8 @@
+# Cricket Statistics and Commentary Application
+
+## Demo Videos
+- [Main Page and Chat Demo](https://www.youtube.com/watch?v=kz1UalbZqD4)
+- [Commentary and Stats Demo](https://www.youtube.com/watch?v=1vWXb16vwnQ)
 
 ## Getting Started
 
