@@ -1,14 +1,12 @@
 # Cricket Statistics and Commentary Application
 
-<p align="center">
-  <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_320,q_50/lsci/db/PICTURES/CMS/316500/316555.png" alt="Cricket Player" width="200" />
-</p>
-
 ## Demo Videos
-- [Main Page and Chat Demo](https://www.youtube.com/watch?v=kz1UalbZqD4)
-- [Commentary and Stats Demo](https://www.youtube.com/watch?v=1vWXb16vwnQ)
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### Main Page and Chat Demo
+[![Main Page and Chat Demo](https://img.youtube.com/vi/kz1UalbZqD4/0.jpg)](https://www.youtube.com/watch?v=kz1UalbZqD4)
+
+### Commentary and Stats Demo
+[![Commentary and Stats Demo](https://img.youtube.com/vi/1vWXb16vwnQ/0.jpg)](https://www.youtube.com/watch?v=1vWXb16vwnQ)
 
 ## Getting Started
 
