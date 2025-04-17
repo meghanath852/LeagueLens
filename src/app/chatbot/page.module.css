@@ -1,0 +1,7 @@
+.chatbot_main::-webkit-scrollbar {
+  display: none;
+}
+
+.chatbot_response::-webkit-scrollbar {
+  display: none;
+}

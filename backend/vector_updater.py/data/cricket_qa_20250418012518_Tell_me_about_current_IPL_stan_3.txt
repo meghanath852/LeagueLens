@@ -1,0 +1,24 @@
+# Question
+Tell me about current IPL standings
+
+# Answer
+As of April 17, 2025, the current IPL standings are as follows:
+
+| Pos | Team                     | M | W | L | T | N/R | Pts | NRR    |
+|-----|-------------------------|---|---|---|---|-----|-----|--------|
+| 1   | Delhi Capitals (DC)     | 7 | 5 | 2 | 0 | 0   | 10  | 0.744  |
+| 2   | Gujarat Titans (GT)     | 5 | 4 | 1 | 0 | 0   | 8   | 1.081  |
+| 3   | Royal Challengers Bengaluru (RCB) | 6 | 4 | 2 | 0 | 0   | 8   | 0.672  |
+| 4   | Punjab Kings (PBKS)     | 6 | 4 | 2 | 0 | 0   | 8   | 0.172  |
+| 5   | Lucknow Super Giants (LSG) | 7 | 4 | 3 | 0 | 0   | 8   | 0.086  |
+| 6   | Kolkata Knight Riders (KKR) | 7 | 3 | 4 | 0 | 0   | 6   | 0.547  |
+| 7   | Mumbai Indians (MI)     | 7 | 3 | 4 | 0 | 0   | 6   | 0.239  |
+| 8   | Rajasthan Royals (RR)   | 7 | 2 | 5 | 0 | 0   | 4   | -0.714 |
+| 9   | Sunrisers Hyderabad (SRH)| 7 | 2 | 5 | 0 | 0   | 4   | -1.217 |
+| 10  | Chennai Super Kings (CSK)| 7 | 2 | 5 | 0 | 0   | 4   | -1.276 |
+
+**Key Highlights:**
+- The latest match saw Mumbai Indians defeat Sunrisers Hyderabad by 4 wickets.
+- Nicholas Pooran from Lucknow Super Giants holds the Orange Cap with 357 runs, while Noor Ahmad from Chennai Super Kings holds the Purple Cap with 12 wickets.
+
+For detailed information, you can refer to the [source](https://www.firstpost.com/firstcricket/ipl-2025-points-table-updated-standings-13874738.html).

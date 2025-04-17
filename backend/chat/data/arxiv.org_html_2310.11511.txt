@@ -1,0 +1,1220 @@
+
+
+
+
+Self-Rag: Self-reflective Retrieval augmented Generation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 Introduction
+2 Related Work
+
+3 Self-Rag: Learning to Retrieve, Generate and Critique
+
+3.1 Problem Formalization and Overview
+
+3.2 Self-Rag Training
+
+
+3.2.1 Training the Critic Model
+
+Critic learning.
+
+
+
+3.2.2 Training the Generator Model
+
+Data collection for generator.
+Connections to prior work on learning with critique.
+
+
+
+
+3.3 Self-Rag Inference
+
+
+
+4 Experiments
+
+4.1 Tasks and Datasets
+4.2 Baselines
+4.3 Experimental settings
+
+
+
+5 Results and Analysis
+
+
+5.1 Main Results
+
+
+5.2 Analysis
+
+
+Ablation studies.
+
+
+6 Conclusion
+
+
+A Self-Rag Details
+
+
+A.1 Reflection Tokens.
+
+Definitions of reflection tokens.
+Details of GPT-4-based data collections.
+Manual analysis of the GPT-4 predictions.
+
+
+
+A.2 Self-Rag Training
+
+Overview of training.
+Full list of seed datasets.
+Performance of the Critic ğ�’�ğ�’�\mathcal{C}caligraphic_C.
+Details of â„³â„³\mathcal{M}caligraphic_M data creation.
+Training examples.
+
+
+
+A.3 Self-Rag Inference
+
+Details of beam-search score calculations.
+Details of adaptive retrieval.
+
+
+
+
+
+B Experimental Details
+
+
+B.1 More Details of Training
+
+More details of training and computations.
+
+
+
+B.2 More Details of Evaluations
+
+Retrieval setup details.
+Detailed experimental settings for individual datasets.
+Task-specific instructions.
+
+
+
+
+
+C Results
+
+
+C.1 Analysis
+
+Reliance on parametric- and non-parametric memories.
+
+
+C.2 Human Evaluation Examples
+C.3 Qualitative Examples
+
+
+D Full List of Instructions and Demonstrations for GPT-4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\usetikzlibrary
+
+tikzmark
+
+
+
+
+
+
+
+
+
+
+
+
+
+  \usetikzlibraryintersections
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Self-Rag: Self-reflective Retrieval augmented Generation
+
+
+Akari Asaiâ€ â€ {}^{\dagger}start_FLOATSUPERSCRIPT â€  end_FLOATSUPERSCRIPT, Zeqiu Wuâ€ â€ {}^{\dagger}start_FLOATSUPERSCRIPT â€  end_FLOATSUPERSCRIPT, Yizhong Wangâ€ Â§â€ absentÂ§{}^{\dagger\lx@sectionsign}start_FLOATSUPERSCRIPT â€  Â§ end_FLOATSUPERSCRIPT, Avirup Silâ€¡â€¡{}^{\ddagger}start_FLOATSUPERSCRIPT â€¡ end_FLOATSUPERSCRIPT, Hannaneh Hajishirziâ€ Â§â€ absentÂ§{}^{\dagger\lx@sectionsign}start_FLOATSUPERSCRIPT â€  Â§ end_FLOATSUPERSCRIPT
+â€ â€ {}^{\dagger}start_FLOATSUPERSCRIPT â€  end_FLOATSUPERSCRIPTUniversity of WashingtonÂ Â Â Â Â Â§Â§{}^{\lx@sectionsign}start_FLOATSUPERSCRIPT Â§ end_FLOATSUPERSCRIPTAllen Institute for AIÂ Â Â Â Â â€¡â€¡{}^{\ddagger}start_FLOATSUPERSCRIPT â€¡ end_FLOATSUPERSCRIPTIBM Research AI 
+{akari,zeqiuwu,yizhongw,hannaneh}@cs.washington.edu, avi@us.ibm.com
+
+
+
+
+Self-rag: Learning to Retrieve, Generate, and Critique through Self-Reflection
+
+
+Akari Asaiâ€ â€ {}^{\dagger}start_FLOATSUPERSCRIPT â€  end_FLOATSUPERSCRIPT, Zeqiu Wuâ€ â€ {}^{\dagger}start_FLOATSUPERSCRIPT â€  end_FLOATSUPERSCRIPT, Yizhong Wangâ€ Â§â€ absentÂ§{}^{\dagger\lx@sectionsign}start_FLOATSUPERSCRIPT â€  Â§ end_FLOATSUPERSCRIPT, Avirup Silâ€¡â€¡{}^{\ddagger}start_FLOATSUPERSCRIPT â€¡ end_FLOATSUPERSCRIPT, Hannaneh Hajishirziâ€ Â§â€ absentÂ§{}^{\dagger\lx@sectionsign}start_FLOATSUPERSCRIPT â€  Â§ end_FLOATSUPERSCRIPT
+â€ â€ {}^{\dagger}start_FLOATSUPERSCRIPT â€  end_FLOATSUPERSCRIPTUniversity of WashingtonÂ Â Â Â Â Â§Â§{}^{\lx@sectionsign}start_FLOATSUPERSCRIPT Â§ end_FLOATSUPERSCRIPTAllen Institute for AIÂ Â Â Â Â â€¡â€¡{}^{\ddagger}start_FLOATSUPERSCRIPT â€¡ end_FLOATSUPERSCRIPTIBM Research AI 
+{akari,zeqiuwu,yizhongw,hannaneh}@cs.washington.edu, avi@us.ibm.com
+
+
+
+
+Abstract
+Despite their remarkable capabilities, large language models (LLMs) often produce responses containing factual inaccuracies due to their sole reliance on the parametric knowledge they encapsulate.
+Retrieval-Augmented Generation (RAG), an ad hoc approach that augments LMs with retrieval of relevant knowledge, decreases such issues.
+However, indiscriminately retrieving and incorporating a fixed number of retrieved passages, regardless of whether retrieval is necessary, or passages are relevant, diminishes LM versatility or can lead to unhelpful response generation.
+We introduce a new framework called Self-Reflective Retrieval-Augmented Generation (Self-Rag) that enhances an LMâ€™s quality and factuality through retrieval and self-reflection.
+Our framework trains a single arbitrary LM that adaptively retrieves passages on-demand, and generates and reflects on retrieved passages and its own generations using special tokens, called reflection tokens. Generating reflection tokens makes the LM controllable during the inference phase, enabling it to tailor its behavior to diverse task requirements.
+Experiments show that Self-Rag (7B and 13B parameters) significantly outperforms state-of-the-art LLMs and retrieval-augmented models on a diverse set of tasks.
+Specifically, Self-Rag outperforms ChatGPT and retrieval-augmented Llama2-chat on Open-domain QA, reasoning and fact verification tasks, and it shows significant gains in improving factuality and citation accuracy for long-form generations relative to these models.111Our code and trained models are available at https://selfrag.github.io/.
+
+
+
+1 Introduction
+
+State-of-the-art LLMs continue to struggle with factual errorsÂ (Mallen etÂ al., 2023; Min etÂ al., 2023) despite their increased model and data scaleÂ (Ouyang etÂ al., 2022).
+Retrieval-Augmented Generation (RAG) methods (FigureÂ 1 left;Â Lewis etÂ al. 2020; Guu etÂ al. 2020) augment the input of LLMs with relevant retrieved passages, reducing factual errors in knowledge-intensive tasksÂ (Ram etÂ al., 2023; Asai etÂ al., 2023a).
+However, these methods may hinder the versatility of LLMs or introduce unnecessary or off-topic passages that lead to low-quality generations Â (Shi etÂ al., 2023) since they retrieve passages indiscriminately regardless of whether the factual grounding is helpful.
+Moreover, the output is not guaranteed to be consistent with retrieved relevant passagesÂ (Gao etÂ al., 2023) since the models are not explicitly trained to leverage and follow facts from provided passages.
+This work introduces Self-Reflective Retrieval-augmented Generation (Self-Rag) to improve an LLMâ€™s generation quality, including its factual accuracy without hurting its versatility, via on-demand retrieval and self-reflection.
+We train an arbitrary LM in an end-to-end manner to learn to reflect on its own generation process given a task input by generating both task output and intermittent special tokens (i.e., reflection tokens). Reflection tokens are categorized into retrieval and critique tokens to indicate the need for retrieval and its generation quality respectively (FigureÂ 1 right).
+
+In particular, given an input prompt and preceding generations, Self-Rag first determines if augmenting the continued generation with retrieved passages would be helpful. If so,
+it outputs a retrieval token that calls a retriever model on demand (Step 1).
+Subsequently, Self-Rag concurrently processes multiple retrieved passages, evaluating their relevance and then generating corresponding task outputs (Step 2). It then generates critique tokens to criticize its own output and choose best one (Step 3) in terms of factuality and overall quality.
+This process differs from conventional RAG (FigureÂ 1 left), which consistently retrieves a fixed number of documents for generation regardless of the retrieval necessity (e.g., the bottom figure example does not require factual knowledge) and never second visits the generation quality.
+Moreover, Self-Rag provides citations for each segment with its self-assessment of whether the output is supported by the passage, leading to easier fact verification.
+
+
+Self-Rag trains an arbitrary LM to generate text with reflection tokens by unifying them as the next token prediction from the expanded model vocabulary.
+
+We train our generator LM on a diverse collection of text interleaved with reflection tokens and retrieved passages.
+Reflection tokens, inspired by reward models used in reinforcement learningÂ (Ziegler etÂ al., 2019; Ouyang etÂ al., 2022), are inserted offline into the original corpus by a trained critic model. This eliminates the need to host a critic model during training, reducing overhead.
+The critic model, in part, is supervised on a dataset of input, output, and corresponding reflection tokens collected by prompting a propriety LM (i.e., GPT-4; OpenAI 2023).
+While we draw inspiration from studies that use control tokens
+to start and guide text generationÂ (Lu etÂ al., 2022; Keskar etÂ al., 2019),
+our trained LM uses critique tokens to assess its own predictions after each generated segment as an integral part of the generation output.
+
+
+Self-Rag further enables a customizable
+decoding algorithm to satisfy hard or soft constraints, which are defined by reflection token predictions.
+In particular, our inference-time algorithm enables us to (1) flexibly adjust retrieval frequency for different downstream applications and (2) customize modelsâ€™ behaviors to user preferences by leveraging reflection tokens through segment-level beam search using the weighted linear sum of the reflection token probabilities as segment score.
+
+
+Figure 1: Overview of Self-Rag. Self-Rag learns to retrieve, critique, and generate text passages to enhance overall generation quality, factuality, and verifiability.
+
+
+
+Empirical results on six tasks, including reasoning and long-form generation, demonstrate that Self-Rag significantly outperforms pre-trained and instruction-tuned LLMs that have more parameters and widely adopted RAG approaches with higher citation accuracy.
+In particular, Self-Rag outperforms retrieval-augmented ChatGPT on four tasks, Llama2-chatÂ (Touvron etÂ al., 2023) and AlpacaÂ (Dubois etÂ al., 2023) on all tasks.
+Our analysis demonstrates the effectiveness of training and inference with reflection tokens for overall performance improvements as well as test-time model customizations (e.g., balancing the trade-off between citation previsions and completeness).
+
+
+
+
+2 Related Work
+
+Retrieval-Augmented Generation.
+
+Retrieval-Augmented Generation (RAG) augments the input space of LMs with retrieved text passagesÂ (Guu etÂ al., 2020; Lewis etÂ al., 2020), leading to large improvements in knowledge-intensive tasks after fine-tuning or used with off-the-shelf LMsÂ (Ram etÂ al., 2023).
+A more recent workÂ (Luo etÂ al., 2023) instruction-tunes an LM with a fixed number of retrieved passages prepended to input, or pre-train a retriever and LM jointly, followed by few-shot fine-tuning on task datasetsÂ (Izacard etÂ al., 2022b). 
+While prior work often retrieves only once at the beginning, Jiang etÂ al. (2023) propose to
+adaptively retrieve passages for generation on top of a proprietary LLM or Â Schick etÂ al. (2023) train an LM to generate API calls for named entities.
+Yet, the improved task performance of such approaches often comes at the expense of runtime efficiencyÂ (Mallen etÂ al., 2023), robustness to irrelevant contextÂ (Shi etÂ al., 2023), and lack of attributionsÂ (Liu etÂ al., 2023a; Gao etÂ al., 2023).
+We introduce a method to train an arbitrary LM to learn to use retrieval on-demand for diverse instruction-following queries and introduce controlled generation guided by reflections tokens to further improve generation quality and attributions.
+
+
+Concurrent RAG work. 
+
+A few concurrent works222All work is arXived within a week of this preprint. on RAG propose new training or prompting strategies to improve widely-adopted RAG approaches.
+Lin etÂ al. (2023) fine-tune both the retriever and LM on instruction-tuning datasets in two steps.
+While we also train our model on diverse instruction-following datasets, Self-Rag enables retrieval on demand and selection of the best possible model output via fine-grained self-reflection, making it widely applicable and more robust and controllable.
+Yoran etÂ al. (2023) use a natural language inference model and Xu etÂ al. (2023) use a summarization model to filter out or compress retrieved passages before using them to prompt the LM to generate the output.
+Self-Rag processes passages in parallel and filters out irrelevant ones through self-reflection, without relying on external models at inference. Moreover, our self-reflection mechanism also evaluates other aspects of the model output quality including factuality.
+LATSÂ (Zhou etÂ al., 2023) prompt off-the-shelf LMs to search for relevant information for question answering tasks and to generate with tree search, guided by LM-generated value scores.
+While their value function simply indicates an overall score of each generation, Self-Rag trains to an arbitrary LM to learn to generate fine-grained self-reflection and customizable inference.
+
+
+
+Training and generating with critics.
+Training LLMs with reinforcement learning (e.g., Proximal Policy Optimization or PPO; Schulman etÂ al. 2017) from human feedback (RLHF) has proven effective in aligning LLMs with human preferencesÂ (Ouyang etÂ al., 2022).
+Wu etÂ al. (2023) introduce fine-grained RLHF with multiple reward models.
+Though our work also studies fine-grained critique on retrieval and generation, we train our target LM on task examples augmented with reflection tokens from a critic
+model offline, with a far lower training cost compared to RLHF. In addition, reflection tokens in Self-Rag enable controllable generation at inference, while RLHF focuses on human preference alignment during training.
+Other works use general control tokens to guide LM generationÂ (Lu etÂ al., 2022; Korbak etÂ al., 2023), while Self-Rag uses reflection tokens to decide the need for retrieval and to self-evaluate generation quality.
+Xie etÂ al. (2023) propose a self-evaluation-guided decoding framework, but they focus only on reasoning tasks with one evaluation dimension (reasoning path consistency) and without retrieval.
+Recent work on LLM refinement (Dhuliawala etÂ al., 2023; Madaan etÂ al., 2023; Paul etÂ al., 2023) prompts a model to generate task output, natural language feedback and refined task output iteratively, but at the cost of inference efficiency.
+
+
+
+
+3 Self-Rag: Learning to Retrieve, Generate and Critique
+
+We introduce Self-Reflective Retrieval-Augmented Generation (Self-Rag), shown in FigureÂ 1. Self-Rag is a framework that enhances the quality and factuality of an LLM through retrieval and self-reflection, without sacrificing LLMâ€™s original creativity and versatility.
+Our end-to-end training lets an LM â„³â„³\mathcal{M}caligraphic_MÂ generate text informed by retrieved passages, if needed, and criticize the output by learning to generate special tokens.
+These reflection tokens (TableÂ 1) signal the need for retrieval or confirm the outputâ€™s relevance, support, or completeness.
+In contrast, common RAG approaches retrieve passages indiscriminately, without ensuring complete support from cited sources.
+
+
+
+3.1 Problem Formalization and Overview
+
+Formally, given input xğ�‘¥xitalic_x, we train â„³â„³\mathcal{M}caligraphic_M to sequentially generate textual outputs yğ�‘¦yitalic_y consisting of multiple segments y=[y1,â€¦,yT]ğ�‘¦subscriptğ�‘¦1â€¦subscriptğ�‘¦ğ�‘‡y=[y_{1},\dots,y_{T}]italic_y = [ italic_y start_POSTSUBSCRIPT 1 end_POSTSUBSCRIPT , â€¦ , italic_y start_POSTSUBSCRIPT italic_T end_POSTSUBSCRIPT ], where ytsubscriptğ�‘¦ğ�‘¡y_{t}italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT indicates a sequence of tokens for the tğ�‘¡titalic_t-th segment.333
+In this paper, we treat one sentence as a segment in our experiments, but our framework is applicable to any segment unit (i.e., sub-sentence).
+Generated tokens in ytsubscriptğ�‘¦ğ�‘¡y_{t}italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT include text from the original vocabulary as well as the reflection tokens (TableÂ 1).
+
+
+
+
+
+
+Type
+
+
+Input
+
+
+Output
+
+
+Definitions
+
+
+
+
+
+
+\tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieve
+
+
+xğ�‘¥xitalic_x / x,yğ�‘¥ğ�‘¦x,yitalic_x , italic_y
+
+
+{yes, no, continue}
+
+
+Decides when to retrieve with â„›â„›\mathcal{R}caligraphic_R
+
+
+
+
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+
+x,dğ�‘¥ğ�‘‘x,ditalic_x , italic_d
+
+
+{relevant, irrelevant}
+
+
+dğ�‘‘ditalic_d provides useful information to solve xğ�‘¥xitalic_x.
+
+
+
+
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+
+x,d,yğ�‘¥ğ�‘‘ğ�‘¦x,d,yitalic_x , italic_d , italic_y
+
+
+{fully supported, partially supported, no support}
+
+
+All of the verification-worthy statement in yğ�‘¦yitalic_y is supported by dğ�‘‘ditalic_d.
+
+
+
+
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsUse
+
+
+x,yğ�‘¥ğ�‘¦x,yitalic_x , italic_y
+
+
+{5, 4, 3, 2, 1}
+
+
+yğ�‘¦yitalic_y is a useful response to xğ�‘¥xitalic_x.
+
+
+
+
+Table 1: Four types of reflection tokens used in Self-Rag. Each type uses several tokens to represent its output values.
+The bottom three rows are three types of \tikzmarknode[draw=myblue,thick,inner sep=2pt]testCritiqueÂ tokens, and the bold text indicates the most desirable critique tokens. x,y,dğ�‘¥ğ�‘¦ğ�‘‘x,y,ditalic_x , italic_y , italic_d indicate input, output, and a relevant passage, respectively.
+
+
+
+Algorithm 1  Self-Rag Inference
+
+
+1:Generator LM â„³â„³\mathcal{M}caligraphic_M, Retriever â„›â„›\mathcal{R}caligraphic_R, Large-scale passage collections {d1,â€¦,dN}subscriptğ�‘‘1â€¦subscriptğ�‘‘ğ�‘�\{d_{1},\ldots,d_{N}\}{ italic_d start_POSTSUBSCRIPT 1 end_POSTSUBSCRIPT , â€¦ , italic_d start_POSTSUBSCRIPT italic_N end_POSTSUBSCRIPT }
+
+
+2:Input: input prompt xğ�‘¥xitalic_x and preceding generation y<tsubscriptğ�‘¦absentğ�‘¡y_{<t}italic_y start_POSTSUBSCRIPT < italic_t end_POSTSUBSCRIPT, Output: next output segment ytsubscriptğ�‘¦ğ�‘¡y_{t}italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT
+
+
+3:â„³â„³\mathcal{M}caligraphic_M predicts \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieveÂ given (x,y<t)ğ�‘¥subscriptğ�‘¦absentğ�‘¡(x,y_{<t})( italic_x , italic_y start_POSTSUBSCRIPT < italic_t end_POSTSUBSCRIPT )
+
+
+4:ifÂ \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieveÂ  == YesÂ then
+
+
+5:Â Â Â Â Â Retrieve relevant text passages ğ��ƒğ��ƒ\mathbf{D}bold_D using â„›â„›\mathcal{R}caligraphic_R given (x,ytâˆ’1)ğ�‘¥subscriptğ�‘¦ğ�‘¡1(x,y_{t-1})( italic_x , italic_y start_POSTSUBSCRIPT italic_t - 1 end_POSTSUBSCRIPT ) â–·â–·\trianglerightâ–· Retrieve
+
+
+
+6:Â Â Â Â Â â„³â„³\mathcal{M}caligraphic_M predicts 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+given x,dğ�‘¥ğ�‘‘x,ditalic_x , italic_d and ytsubscriptğ�‘¦ğ�‘¡y_{t}italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT given x,d,y<tğ�‘¥ğ�‘‘subscriptğ�‘¦absentğ�‘¡x,d,y_{<t}italic_x , italic_d , italic_y start_POSTSUBSCRIPT < italic_t end_POSTSUBSCRIPT for each dâˆˆğ��ƒğ�‘‘ğ��ƒd\in\mathbf{D}italic_d âˆˆ bold_D â–·â–·\trianglerightâ–· Generate
+
+
+
+7:Â Â Â Â Â â„³â„³\mathcal{M}caligraphic_M predicts 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+and 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsUse
+
+given x,yt,dğ�‘¥subscriptğ�‘¦ğ�‘¡ğ�‘‘x,y_{t},ditalic_x , italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT , italic_d for each dâˆˆğ��ƒğ�‘‘ğ��ƒd\in\mathbf{D}italic_d âˆˆ bold_D â–·â–·\trianglerightâ–· Critique
+
+
+
+8:Â Â Â Â Â Rank ytsubscriptğ�‘¦ğ�‘¡y_{t}italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT based on 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+, 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+, 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsUse
+â–·â–·\trianglerightâ–· Detailed in SectionÂ 3.3 
+
+
+
+9:elseÂ ifÂ \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieveÂ  == NoÂ then
+
+
+10:Â Â Â Â Â â„³gâ�¢eâ�¢nsubscriptâ„³ğ�‘”ğ�‘’ğ�‘›\mathcal{M}_{gen}caligraphic_M start_POSTSUBSCRIPT italic_g italic_e italic_n end_POSTSUBSCRIPT predicts ytsubscriptğ�‘¦ğ�‘¡y_{t}italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT given xğ�‘¥xitalic_x â–·â–·\trianglerightâ–· Generate
+
+
+
+11:Â Â Â Â Â â„³gâ�¢eâ�¢nsubscriptâ„³ğ�‘”ğ�‘’ğ�‘›\mathcal{M}_{gen}caligraphic_M start_POSTSUBSCRIPT italic_g italic_e italic_n end_POSTSUBSCRIPT predicts 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsUse
+
+given x,ytğ�‘¥subscriptğ�‘¦ğ�‘¡x,y_{t}italic_x , italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPTâ–·â–·\trianglerightâ–· Critique
+
+
+
+
+
+Inference overview.
+FigureÂ 1 and AlgorithmÂ 1 present an overview of Self-Rag at inference.
+For every xğ�‘¥xitalic_x and preceding generation y<tsubscriptğ�‘¦absentğ�‘¡y_{<t}italic_y start_POSTSUBSCRIPT < italic_t end_POSTSUBSCRIPT, the model decodes a retrieval token to evaluate the utility of retrieval. If retrieval is not required, the model predicts the next output segment, as it does in a standard LM.
+If retrieval is needed, the model generates: a critique token to evaluate the retrieved passageâ€™s relevance, the next response segment, and a critique token to evaluate if the information in the response segment is supported by the passage. Finally, a new critique token evaluates the overall utility of the response.444We follow Liu etÂ al. (2023a) in using a â€œperceivedâ€� utility value that is independent of retrieved passages.
+To generate each segment, Self-Rag processes multiple passages in parallel and uses its own generated reflection tokens to enforce soft constraints (SectionÂ 3.3) or hard control (AlgorithmÂ 1) over the generated task output.
+For instance, in FigureÂ 1 (right), the retrieved passages d1subscriptğ�‘‘1d_{1}italic_d start_POSTSUBSCRIPT 1 end_POSTSUBSCRIPT is selected at the first time step since d2subscriptğ�‘‘2d_{2}italic_d start_POSTSUBSCRIPT 2 end_POSTSUBSCRIPT does not provide direct evidence (
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+is Irrelevant) and d3subscriptğ�‘‘3d_{3}italic_d start_POSTSUBSCRIPT 3 end_POSTSUBSCRIPT output is only partially supported while d1subscriptğ�‘‘1d_{1}italic_d start_POSTSUBSCRIPT 1 end_POSTSUBSCRIPT are fully supported.
+
+
+Training overview.
+Self-Rag enables an arbitrary LM to generate text with reflection tokens by unifying them as next token predictions from the expanded model vocabulary (i.e., the original vocabulary plus reflection tokens). Specifically, we train the generator model â„³â„³\mathcal{M}caligraphic_M on a curated corpus with interleaving passages retrieved by a retriever â„›â„›\mathcal{R}caligraphic_R and reflection tokens predicted by a critic model ğ�’�ğ�’�\mathcal{C}caligraphic_C (summarized in Appendix AlgorithmÂ 2). We train ğ�’�ğ�’�\mathcal{C}caligraphic_C to generate reflection tokens for evaluating retrieved passages and the quality of a given task output (Section 3.2.1).
+Using the critic model, we update the training corpus by inserting reflection tokens into task outputs offline.
+Subsequently, we train the final generator model (â„³â„³\mathcal{M}caligraphic_M) using the conventional LM objective (Section 3.2.2) to enable â„³â„³\mathcal{M}caligraphic_M to generate reflection tokens by itself without relying on the critic at inference time.
+
+
+
+
+3.2 Self-Rag Training
+
+Here, we describe the supervised data collection and training of two models, the critic ğ�’�ğ�’�\mathcal{C}caligraphic_C (SectionÂ 3.2.1) and the generator â„³â„³\mathcal{M}caligraphic_M (SectionÂ 3.2.2).
+
+
+
+3.2.1 Training the Critic Model
+
+Data collection for critic model.
+Manual annotation of reflection tokens for each segment is expensiveÂ (Wu etÂ al., 2023).
+A state-of-the-art LLM like GPT-4Â (OpenAI, 2023) can be effectively used to generate such feedbackÂ (Liu etÂ al., 2023b).
+However, depending on such proprietary LMs can raise API costs and diminish reproducibilityÂ (Chen etÂ al., 2023).
+We create supervised data by prompting GPT-4 to generate reflection tokens and then distill their knowledge into an in-house ğ�’�ğ�’�\mathcal{C}caligraphic_C.
+For each group of reflection tokens, we randomly sample instances from the original training data: {Xsâ�¢aâ�¢mâ�¢pâ�¢lâ�¢e,Ysâ�¢aâ�¢mâ�¢pâ�¢lâ�¢e}âˆ¼{X,Y}similar-tosuperscriptğ�‘‹ğ�‘ ğ�‘�ğ�‘šğ�‘�ğ�‘™ğ�‘’superscriptğ�‘Œğ�‘ ğ�‘�ğ�‘šğ�‘�ğ�‘™ğ�‘’ğ�‘‹ğ�‘Œ\{X^{sample},Y^{sample}\}\sim\{X,Y\}{ italic_X start_POSTSUPERSCRIPT italic_s italic_a italic_m italic_p italic_l italic_e end_POSTSUPERSCRIPT , italic_Y start_POSTSUPERSCRIPT italic_s italic_a italic_m italic_p italic_l italic_e end_POSTSUPERSCRIPT } âˆ¼ { italic_X , italic_Y }.
+
+As different reflection token groups have their own definitions and input, as shown in TableÂ 1, we use different instruction prompts for them. Here, we use \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieveÂ  as an example. We prompt GPT-4 with a type-specific instruction (â€œGiven an instruction, make a judgment on whether finding some external documents from the web helps to generate a better response.â€�) followed by few-shot demonstrations Iğ��¼Iitalic_I the original task input xğ�‘¥xitalic_x and output yğ�‘¦{y}italic_y to predict an appropriate reflection token as text: pâ�¢(r|I,x,y)ğ�‘�conditionalğ�‘Ÿğ��¼ğ�‘¥ğ�‘¦p(r|I,x,y)italic_p ( italic_r | italic_I , italic_x , italic_y ).
+Manual assessment reveals that GPT-4 reflection token predictions show high agreement with human evaluations.
+We collect 4k-20k supervised training data for each type and combine them to form training data for ğ�’�ğ�’�\mathcal{C}caligraphic_C.
+Appendix SectionÂ D shows the full list of instructions, and A.1 contains more details and our analysis.
+
+
+Critic learning.
+
+After we collect training data ğ�’Ÿcâ�¢râ�¢iâ�¢tâ�¢iâ�¢csubscriptğ�’Ÿğ�‘�ğ�‘Ÿğ�‘–ğ�‘¡ğ�‘–ğ�‘�\mathcal{D}_{critic}caligraphic_D start_POSTSUBSCRIPT italic_c italic_r italic_i italic_t italic_i italic_c end_POSTSUBSCRIPT, we initialize ğ�’�ğ�’�\mathcal{C}caligraphic_C with a pre-trained LM and train it on ğ�’Ÿcâ�¢râ�¢iâ�¢tâ�¢iâ�¢csubscriptğ�’Ÿğ�‘�ğ�‘Ÿğ�‘–ğ�‘¡ğ�‘–ğ�‘�\mathcal{D}_{critic}caligraphic_D start_POSTSUBSCRIPT italic_c italic_r italic_i italic_t italic_i italic_c end_POSTSUBSCRIPT using a standard conditional language modeling objective, maximizing likelihood:
+
+
+
+maxğ�’�â�¡ğ�”¼((x,y),r)âˆ¼ğ�’Ÿcâ�¢râ�¢iâ�¢tâ�¢iâ�¢câ�¢logâ�¡pğ�’�â�¢(r|x,y),Â rÂ for reflection tokens.Â subscriptğ�’�subscriptğ�”¼similar-toğ�‘¥ğ�‘¦ğ�‘Ÿsubscriptğ�’Ÿğ�‘�ğ�‘Ÿğ�‘–ğ�‘¡ğ�‘–ğ�‘�subscriptğ�‘�ğ�’�conditionalğ�‘Ÿğ�‘¥ğ�‘¦Â rÂ for reflection tokens.Â \max_{\mathcal{C}}\mathbb{E}_{((x,y),r)\sim\mathcal{D}_{critic}}\log p_{%
+\mathcal{C}}(r|x,y),\text{
+$r$ for reflection tokens. }roman_max start_POSTSUBSCRIPT caligraphic_C end_POSTSUBSCRIPT blackboard_E start_POSTSUBSCRIPT ( ( italic_x , italic_y ) , italic_r ) âˆ¼ caligraphic_D start_POSTSUBSCRIPT italic_c italic_r italic_i italic_t italic_i italic_c end_POSTSUBSCRIPT end_POSTSUBSCRIPT roman_log italic_p start_POSTSUBSCRIPT caligraphic_C end_POSTSUBSCRIPT ( italic_r | italic_x , italic_y ) , r for reflection tokens.
+
+(1)
+
+
+Though the initial model can be any pre-trained LM, we use the same one as the generator LM (i.e., Llama 2-7B; Touvron etÂ al. 2023) for ğ�’�ğ�’�\mathcal{C}caligraphic_C initialization.
+The critic achieves a higher than 90% agreement with GPT-4-based predictions on most reflection token categories (Appendix TableÂ 4).
+
+
+Figure 2: Self-Rag training examples. The left example does not require retrieval while the right one requires retrieval; thus, passages are inserted. More examples are in Appendix TableÂ 4.
+
+
+
+
+
+3.2.2 Training the Generator Model
+
+Data collection for generator.
+
+Given an input-output pair (x,y)ğ�‘¥ğ�‘¦(x,y)( italic_x , italic_y ), we augment the original output yğ�‘¦yitalic_y using the retrieval and critic models to create supervised data that precisely mimics the Self-Rag inference-time process (SectionÂ 3.1).
+For each segment ytâˆˆysubscriptğ�‘¦ğ�‘¡ğ�‘¦y_{t}\in yitalic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT âˆˆ italic_y, we run ğ�’�ğ�’�\mathcal{C}caligraphic_C to assess whether additional passages could help to enhance generation.
+If retrieval is required, the retrieval special token \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieveÂ =Yes is added, and â„›â„›\mathcal{R}caligraphic_R retrieves the top Kğ��¾Kitalic_K passages, ğ��ƒğ��ƒ\mathbf{D}bold_D.
+For each passage, ğ�’�ğ�’�\mathcal{C}caligraphic_C further evaluates whether the passage is relevant and predicts 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+.
+If a passage is relevant, ğ�’�ğ�’�\mathcal{C}caligraphic_C further evaluates whether the passage supports the model generation and predicts 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+.
+Critique tokens 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+and 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+are appended after the retrieved passage or generations.
+At the end of the output, yğ�‘¦yitalic_y (or yTsubscriptğ�‘¦ğ�‘‡y_{T}italic_y start_POSTSUBSCRIPT italic_T end_POSTSUBSCRIPT), ğ�’�ğ�’�\mathcal{C}caligraphic_C predicts the overall utility token 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsUse
+
+, and an augmented output with reflection tokens and the original input pair is added to ğ�’Ÿgâ�¢eâ�¢nsubscriptğ�’Ÿğ�‘”ğ�‘’ğ�‘›\mathcal{D}_{gen}caligraphic_D start_POSTSUBSCRIPT italic_g italic_e italic_n end_POSTSUBSCRIPT.
+See the example training data in FigureÂ 2.
+
+
+Generator learning.
+We train the generator model â„³â„³\mathcal{M}caligraphic_M by training on the curated corpus augmented with reflection tokens ğ�’Ÿgâ�¢eâ�¢nsubscriptğ�’Ÿğ�‘”ğ�‘’ğ�‘›\mathcal{D}_{gen}caligraphic_D start_POSTSUBSCRIPT italic_g italic_e italic_n end_POSTSUBSCRIPT using the standard next token objective:
+
+
+
+maxâ„³â�¡ğ�”¼(x,y,r)âˆ¼ğ�’Ÿgâ�¢eâ�¢nâ�¢logâ�¡pâ„³â�¢(y,r|x).subscriptâ„³subscriptğ�”¼similar-toğ�‘¥ğ�‘¦ğ�‘Ÿsubscriptğ�’Ÿğ�‘”ğ�‘’ğ�‘›subscriptğ�‘�â„³ğ�‘¦conditionalğ�‘Ÿğ�‘¥\max_{\mathcal{M}}\mathbb{E}_{(x,y,r)\sim\mathcal{D}_{gen}}\log p_{\mathcal{M}%
+}(y,r|x).roman_max start_POSTSUBSCRIPT caligraphic_M end_POSTSUBSCRIPT blackboard_E start_POSTSUBSCRIPT ( italic_x , italic_y , italic_r ) âˆ¼ caligraphic_D start_POSTSUBSCRIPT italic_g italic_e italic_n end_POSTSUBSCRIPT end_POSTSUBSCRIPT roman_log italic_p start_POSTSUBSCRIPT caligraphic_M end_POSTSUBSCRIPT ( italic_y , italic_r | italic_x ) .
+
+(2)
+
+
+Unlike ğ�’�ğ�’�\mathcal{C}caligraphic_C training (Eq.Â 1), â„³â„³\mathcal{M}caligraphic_M learns to predict the target output as well as the reflection tokens.
+During training, we mask out the retrieved text chunks (surrounded by <p> and </p> in FigureÂ 2) for loss calculation and
+expand the original vocabulary ğ�’±ğ�’±\mathcal{V}caligraphic_V with a set of reflection tokens {\tikzmarknodeâ�¢[dâ�¢râ�¢aâ�¢w=mâ�¢yâ�¢bâ�¢lâ�¢uâ�¢e,tâ�¢hâ�¢iâ�¢câ�¢k,iâ�¢nâ�¢nâ�¢eâ�¢râ�¢sâ�¢eâ�¢p=2â�¢pâ�¢t]â�¢tâ�¢eâ�¢sâ�¢tâ�¢ğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���,\tikzmarknodeâ�¢[dâ�¢râ�¢aâ�¢w=mâ�¢yâ�¢râ�¢eâ�¢d,tâ�¢hâ�¢iâ�¢câ�¢k,iâ�¢nâ�¢nâ�¢eâ�¢râ�¢sâ�¢eâ�¢p=2â�¢pâ�¢t]â�¢tâ�¢eâ�¢sâ�¢tâ�¢ğ��‘ğ���ğ��­ğ��«ğ��¢ğ���ğ��¯ğ���}\tikzmarknodedelimited-[]formulae-sequenceğ�‘‘ğ�‘Ÿğ�‘�ğ�‘¤ğ�‘šğ�‘¦ğ�‘�ğ�‘™ğ�‘¢ğ�‘’ğ�‘¡â„�ğ�‘–ğ�‘�ğ�‘˜ğ�‘–ğ�‘›ğ�‘›ğ�‘’ğ�‘Ÿğ�‘ ğ�‘’ğ�‘�2ğ�‘�ğ�‘¡ğ�‘¡ğ�‘’ğ�‘ ğ�‘¡ğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���\tikzmarknodedelimited-[]formulae-sequenceğ�‘‘ğ�‘Ÿğ�‘�ğ�‘¤ğ�‘šğ�‘¦ğ�‘Ÿğ�‘’ğ�‘‘ğ�‘¡â„�ğ�‘–ğ�‘�ğ�‘˜ğ�‘–ğ�‘›ğ�‘›ğ�‘’ğ�‘Ÿğ�‘ ğ�‘’ğ�‘�2ğ�‘�ğ�‘¡ğ�‘¡ğ�‘’ğ�‘ ğ�‘¡ğ��‘ğ���ğ��­ğ��«ğ��¢ğ���ğ��¯ğ���\{\tikzmarknode[draw=myblue,thick,innersep=2pt]{test}{\textbf{{\color[rgb]{%
+0.2,0.3,0.6}Critique}}},\tikzmarknode[draw=myred,thick,innersep=2pt]{test}{%
+\textbf{{\color[rgb]{0.7,0.3,0.0}Retrieve}}}\}{ [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t Critique , [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_r italic_e italic_d , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t Retrieve }.
+
+
+
+Connections to prior work on learning with critique.
+
+Recent work
+incorporates additional critique (feedback) during training, e.g., RLHFÂ (Ouyang etÂ al. 2022) via PPO.
+While PPO relies on separate reward models during training, we compute critique offline and directly insert them into the training corpus, where the generator LM is trained with a standard LM objective. This significantly reduces training costs compared to PPO.
+Our work also relates to prior work that incorporates special tokens to control generation Â (Keskar etÂ al., 2019; Lu etÂ al., 2022; Korbak etÂ al., 2023). Our Self-Rag learns to generate special tokens to evaluate its own prediction after each generated segment,
+enabling the use of a soft re-ranking mechanism or hard constraints at inference (discussed next).
+
+
+
+
+
+
+3.3 Self-Rag Inference
+
+Generating reflection tokens to self-evaluate its own output makes Self-Rag controllable during the inference phase, enabling it to tailor its behavior to diverse task requirements.
+For tasks demanding factual accuracyÂ (Min etÂ al., 2023), we aim for the model to retrieve passages more frequently to ensure that the output aligns closely with the available evidence. Conversely, in more open-ended tasks, like composing a personal experience essay, the emphasis shifts towards retrieving less and prioritizing the overall creativity or utility score. In this section, we describe approaches to enforce control to meet these distinct objectives during the inference process.
+
+
+Adaptive retrieval with threshold.
+Self-Rag dynamically decides when to retrieve text passages by predicting \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieve.
+Alternatively, our framework allows a threshold to be set. Specifically, if the probability of generating the \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieve=Yes token normalized over all output tokens in \tikzmarknode[draw=myred,thick,inner sep=2pt]testRetrieveÂ  surpasses a designated threshold, we trigger retrieval (details in Appendix SectionÂ A.3).
+
+
+
+Tree-decoding with critique tokens.
+At each segment step tğ�‘¡titalic_t, when retrieval is required, based either on hard or soft conditions, â„›â„›\mathcal{R}caligraphic_R retrieves Kğ��¾Kitalic_K passages, and the generator
+â„³â„³\mathcal{M}caligraphic_M processes each passage in parallel and outputs Kğ��¾Kitalic_K different continuation candidates.
+We conduct a segment-level beam search (with the beam size=Bğ��µBitalic_B) to obtain the top-Bğ��µBitalic_B segment continuations at each timestamp tğ�‘¡titalic_t, and return the best sequence at the end of generation. The score of each segment ytsubscriptğ�‘¦ğ�‘¡y_{t}italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT with respect to passage dğ�‘‘ditalic_d is updated with a critic score ğ�’®ğ�’®\mathcal{S}caligraphic_S
+that is the linear weighted sum of the normalized probability of each \tikzmarknode[draw=myblue,thick,inner sep=2pt]testCritiqueÂ token type.
+For each critique token group Gğ��ºGitalic_G (e.g., 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+), we denote its score at timestamp tğ�‘¡titalic_t as stGsuperscriptsubscriptğ�‘ ğ�‘¡ğ��ºs_{t}^{G}italic_s start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT start_POSTSUPERSCRIPT italic_G end_POSTSUPERSCRIPT,
+and we compute a segment score as follows:
+
+
+
+f(yt,d,\tikzmarknode[draw=myblue,thick,innersep=2pt]testğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���)=p(yt|x,d,y<t))+ğ�’®(\tikzmarknode[draw=myblue,thick,innersep=2pt]testğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���),wheref(y_{t},d,\tikzmarknode[draw=myblue,thick,innersep=2pt]{test}{\textbf{{\color[%
+rgb]{0.2,0.3,0.6}Critique}}})=p(y_{t}|x,d,y_{<t}))+\mathcal{S}(\tikzmarknode[%
+draw=myblue,thick,innersep=2pt]{test}{\textbf{{\color[rgb]{0.2,0.3,0.6}%
+Critique}}}){\rm,where}italic_f ( italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT , italic_d , [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t Critique ) = italic_p ( italic_y start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT | italic_x , italic_d , italic_y start_POSTSUBSCRIPT < italic_t end_POSTSUBSCRIPT ) ) + caligraphic_S ( [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t Critique ) , roman_where
+
+(3)
+
+
+
+
+
+ğ�’®â�¢(\tikzmarknodeâ�¢[dâ�¢râ�¢aâ�¢w=mâ�¢yâ�¢bâ�¢lâ�¢uâ�¢e,tâ�¢hâ�¢iâ�¢câ�¢k,iâ�¢nâ�¢nâ�¢eâ�¢râ�¢sâ�¢eâ�¢p=2â�¢pâ�¢t]â�¢tâ�¢eâ�¢sâ�¢tâ�¢ğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���)=âˆ‘Gâˆˆğ�’¢wGâ�¢stGâ�¢Â forÂ â�¢ğ�’¢={\tikzmarknodeâ�¢[dâ�¢râ�¢aâ�¢w=mâ�¢yâ�¢bâ�¢lâ�¢uâ�¢e,tâ�¢hâ�¢iâ�¢câ�¢k,iâ�¢nâ�¢nâ�¢eâ�¢râ�¢sâ�¢eâ�¢p=2â�¢pâ�¢t]â�¢tâ�¢eâ�¢sâ�¢tâ�¢IsRel,\tikzmarknodeâ�¢[dâ�¢râ�¢aâ�¢w=mâ�¢yâ�¢bâ�¢lâ�¢uâ�¢e,tâ�¢hâ�¢iâ�¢câ�¢k,iâ�¢nâ�¢nâ�¢eâ�¢râ�¢sâ�¢eâ�¢p=2â�¢pâ�¢t]â�¢tâ�¢eâ�¢sâ�¢tâ�¢IsSup,\tikzmarknodeâ�¢[dâ�¢râ�¢aâ�¢w=mâ�¢yâ�¢bâ�¢lâ�¢uâ�¢e,tâ�¢hâ�¢iâ�¢câ�¢k,iâ�¢nâ�¢nâ�¢eâ�¢râ�¢sâ�¢eâ�¢p=2â�¢pâ�¢t]â�¢tâ�¢eâ�¢sâ�¢tâ�¢IsUse},ğ�’®\tikzmarknodedelimited-[]formulae-sequenceğ�‘‘ğ�‘Ÿğ�‘�ğ�‘¤ğ�‘šğ�‘¦ğ�‘�ğ�‘™ğ�‘¢ğ�‘’ğ�‘¡â„�ğ�‘–ğ�‘�ğ�‘˜ğ�‘–ğ�‘›ğ�‘›ğ�‘’ğ�‘Ÿğ�‘ ğ�‘’ğ�‘�2ğ�‘�ğ�‘¡ğ�‘¡ğ�‘’ğ�‘ ğ�‘¡ğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���subscriptğ��ºğ�’¢superscriptğ�‘¤ğ��ºsuperscriptsubscriptğ�‘ ğ�‘¡ğ��ºÂ forÂ ğ�’¢\tikzmarknodedelimited-[]formulae-sequenceğ�‘‘ğ�‘Ÿğ�‘�ğ�‘¤ğ�‘šğ�‘¦ğ�‘�ğ�‘™ğ�‘¢ğ�‘’ğ�‘¡â„�ğ�‘–ğ�‘�ğ�‘˜ğ�‘–ğ�‘›ğ�‘›ğ�‘’ğ�‘Ÿğ�‘ ğ�‘’ğ�‘�2ğ�‘�ğ�‘¡ğ�‘¡ğ�‘’ğ�‘ ğ�‘¡IsRel\tikzmarknodedelimited-[]formulae-sequenceğ�‘‘ğ�‘Ÿğ�‘�ğ�‘¤ğ�‘šğ�‘¦ğ�‘�ğ�‘™ğ�‘¢ğ�‘’ğ�‘¡â„�ğ�‘–ğ�‘�ğ�‘˜ğ�‘–ğ�‘›ğ�‘›ğ�‘’ğ�‘Ÿğ�‘ ğ�‘’ğ�‘�2ğ�‘�ğ�‘¡ğ�‘¡ğ�‘’ğ�‘ ğ�‘¡IsSup\tikzmarknodedelimited-[]formulae-sequenceğ�‘‘ğ�‘Ÿğ�‘�ğ�‘¤ğ�‘šğ�‘¦ğ�‘�ğ�‘™ğ�‘¢ğ�‘’ğ�‘¡â„�ğ�‘–ğ�‘�ğ�‘˜ğ�‘–ğ�‘›ğ�‘›ğ�‘’ğ�‘Ÿğ�‘ ğ�‘’ğ�‘�2ğ�‘�ğ�‘¡ğ�‘¡ğ�‘’ğ�‘ ğ�‘¡IsUse\mathcal{S}(\tikzmarknode[draw=myblue,thick,innersep=2pt]{test}{\textbf{{%
+\color[rgb]{0.2,0.3,0.6}Critique}}})=\sum_{G\in\mathcal{G}}w^{G}s_{t}^{G}\mbox%
+{ for }\mathcal{G}=\{\tikzmarknode[draw=myblue,thick,innersep=2pt]{test}{%
+\textbf{{\color[rgb]{0.2,0.3,0.6}{IsRel}}}},\tikzmarknode[draw=myblue,thick,%
+innersep=2pt]{test}{\textbf{{\color[rgb]{0.2,0.3,0.6}{IsSup}}}},\tikzmarknode[%
+draw=myblue,thick,innersep=2pt]{test}{\textbf{{\color[rgb]{0.2,0.3,0.6}{IsUse}%
+}}}\},caligraphic_S ( [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t Critique ) = âˆ‘ start_POSTSUBSCRIPT italic_G âˆˆ caligraphic_G end_POSTSUBSCRIPT italic_w start_POSTSUPERSCRIPT italic_G end_POSTSUPERSCRIPT italic_s start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT start_POSTSUPERSCRIPT italic_G end_POSTSUPERSCRIPT for caligraphic_G = { [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t IsRel , [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t IsSup , [ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t IsUse } ,
+
+(4)
+
+
+where stG=ptâ�¢(r^)âˆ‘i=1NGptâ�¢(ri)superscriptsubscriptğ�‘ ğ�‘¡ğ��ºsubscriptğ�‘�ğ�‘¡^ğ�‘Ÿsuperscriptsubscriptğ�‘–1superscriptğ�‘�ğ��ºsubscriptğ�‘�ğ�‘¡subscriptğ�‘Ÿğ�‘–s_{t}^{G}=\frac{p_{t}(\hat{r})}{\sum_{i=1}^{N^{G}}p_{t}(r_{i})}italic_s start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT start_POSTSUPERSCRIPT italic_G end_POSTSUPERSCRIPT = divide start_ARG italic_p start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT ( over^ start_ARG italic_r end_ARG ) end_ARG start_ARG âˆ‘ start_POSTSUBSCRIPT italic_i = 1 end_POSTSUBSCRIPT start_POSTSUPERSCRIPT italic_N start_POSTSUPERSCRIPT italic_G end_POSTSUPERSCRIPT end_POSTSUPERSCRIPT italic_p start_POSTSUBSCRIPT italic_t end_POSTSUBSCRIPT ( italic_r start_POSTSUBSCRIPT italic_i end_POSTSUBSCRIPT ) end_ARG stands for the generation probability of the most desirable reflection token r^^ğ�‘Ÿ\hat{r}over^ start_ARG italic_r end_ARG (e.g., 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+=Relevant) for the critique token type Gğ��ºGitalic_G with NGsuperscriptğ�‘�ğ��ºN^{G}italic_N start_POSTSUPERSCRIPT italic_G end_POSTSUPERSCRIPT distinct tokens (that represent different possible values for Gğ��ºGitalic_G).
+The weights wGsuperscriptğ�‘¤ğ��ºw^{G}italic_w start_POSTSUPERSCRIPT italic_G end_POSTSUPERSCRIPT in Eq.Â 4 are hyperparameters that can be adjusted at inference time to enable customized behaviors at test time.
+For instance, to ensure that result yğ�‘¦yitalic_y is mostly supported by evidence, we can set a weight term for the 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+score higher, while relatively lowering weights for other aspects.
+Alternatively, we could further enforce hard constraints during decoding using \tikzmarknode[draw=myblue,thick,inner sep=2pt]testCritique.
+Instead of using a soft reward function in Eq.Â 4, we could explicitly filter out a segment continuation when the model generates an undesirable \tikzmarknodeâ�¢[dâ�¢râ�¢aâ�¢w=mâ�¢yâ�¢bâ�¢lâ�¢uâ�¢e,tâ�¢hâ�¢iâ�¢câ�¢k,iâ�¢nâ�¢nâ�¢eâ�¢râ�¢sâ�¢eâ�¢p=2â�¢pâ�¢t]â�¢tâ�¢eâ�¢sâ�¢tâ�¢ğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���\tikzmarknodedelimited-[]formulae-sequenceğ�‘‘ğ�‘Ÿğ�‘�ğ�‘¤ğ�‘šğ�‘¦ğ�‘�ğ�‘™ğ�‘¢ğ�‘’ğ�‘¡â„�ğ�‘–ğ�‘�ğ�‘˜ğ�‘–ğ�‘›ğ�‘›ğ�‘’ğ�‘Ÿğ�‘ ğ�‘’ğ�‘�2ğ�‘�ğ�‘¡ğ�‘¡ğ�‘’ğ�‘ ğ�‘¡ğ��‚ğ��«ğ��¢ğ��­ğ��¢ğ��ªğ��®ğ���\tikzmarknode[draw=myblue,thick,innersep=2pt]{test}{\textbf{{\color[rgb]{%
+0.2,0.3,0.6}Critique}}}[ italic_d italic_r italic_a italic_w = italic_m italic_y italic_b italic_l italic_u italic_e , italic_t italic_h italic_i italic_c italic_k , italic_i italic_n italic_n italic_e italic_r italic_s italic_e italic_p = 2 italic_p italic_t ] italic_t italic_e italic_s italic_t Critique token (e.g., 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+=No support) .
+Balancing the trade-off between multiple preferences has been studied in RLHFÂ (Touvron etÂ al., 2023; Wu etÂ al., 2023), which often requires training to change modelsâ€™ behaviors. Self-Rag tailors an LM with no additional training.
+
+
+
+
+
+4 Experiments
+
+
+4.1 Tasks and Datasets
+
+We conduct evaluations of our Self-Rag and diverse baselines on a range of downstream tasks, holistically evaluating outputs with metrics designed to assess overall correctness, factuality, and fluency.
+Throughout these experiments, we conduct zero-shot evaluations, where we provide instructions describing tasks without few-shot demonstrationsÂ (Wei etÂ al., 2022; Sanh etÂ al., 2022).
+Details of our experimentsâ€™ settings, including test-time instructions, are available in the Appendix SectionÂ B.1.
+
+
+Closed-set tasks include two datasets, i.e., a fact verification dataset about public health (PubHealth; Zhang etÂ al. 2023) and a multiple-choice reasoning dataset created from scientific exams (ARC-Challenge; Â Clark etÂ al. 2018).
+We use accuracy as an evaluation metric and report on the test set.
+We aggregate the answer probabilities of target classes for both of these datasets (Appendix SectionÂ B.2).
+
+
+Short-form generations tasks include two open-domain question answering (QA) datasets, PopQAÂ (Mallen etÂ al., 2023) and TriviaQA-unfilteredÂ (Joshi etÂ al., 2017), where systems need to answer arbitrary questions about factual knowledge.
+For PopQA, we use the long-tail subset, consisting of 1,399 rare entity queries whose monthly Wikipedia page views are less than 100.
+As the TriviaQA-unfiltered (open) test set is not publicly available, we follow prior workâ€™s validation and test splitÂ (Min etÂ al., 2019; Guu etÂ al., 2020), using 11,313 test queries for evaluation.
+We evaluate performance based on whether gold answers are included in the model generations instead of strictly requiring exact matching, following Mallen etÂ al. (2023); Schick etÂ al. (2023).
+
+
+Long-form generation tasks include a biography generation taskÂ (Min etÂ al., 2023) and a long-form QA taskÂ ALCE-ASQAÂ Gao etÂ al. (2023); Stelmakh etÂ al. (2022).
+We use FactScoreÂ (Min etÂ al., 2023) to evaluate biographies, and we use official metrics of correctness (str-em), fluency based on MAUVEÂ (Pillutla etÂ al., 2021), and citation precision and recallÂ (Gao etÂ al., 2023) for ASQA. 555https://github.com/princeton-nlp/ALCE
+
+
+
+
+4.2 Baselines
+
+Baselines without retrievals.
+We evaluate strong publicly available pre-trained LLMs, Llama27b,13b7b13b{}_{\textsc{7b},\textsc{13b}}start_FLOATSUBSCRIPT 7b , 13b end_FLOATSUBSCRIPTÂ (Touvron etÂ al., 2023), instruction-tuned models, Alpaca7b,13b7b13b{}_{\textsc{7b},\textsc{13b}}start_FLOATSUBSCRIPT 7b , 13b end_FLOATSUBSCRIPTÂ (Dubois etÂ al., 2023) (our replication based on Llama2); and models trained and reinforced using private data, ChatGPTÂ (Ouyang etÂ al., 2022) and Llama2-chat13b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT.
+For instruction-tuned LMs, we use the official system prompt or instruction format used during training if publicly available.
+We also compare our method to concurrent work, CoVE65b65b{}_{\textsc{65b}}start_FLOATSUBSCRIPT 65b end_FLOATSUBSCRIPTÂ (Dhuliawala etÂ al., 2023), which introduces iterative prompt engineering to improve the factuality of LLM generations.
+
+
+
+Baselines with retrievals.
+We evaluate models augmented with retrieval at test time or during training. The first category includes standard RAG baselines, where an LM (Llama2, Alpaca) generates output given the query prepended with the top retrieved documents using the same retriever as in our system. It also includes Llama2-FT, where Llama2 is fine-tuned on all training data we use without the reflection tokens or retrieved passages.
+We also report the result of retrieval-augmented baselines with LMs trained with private data: Ret-ChatGPT and Ret-Llama2-chat, which deploy the same augmentation technique above, as well as perplexity.ai, an InstructGPT-based production search system.
+
+The second category includes concurrent methods that are trained with retrieved text passages, i.e.,  SAILÂ (Luo etÂ al., 2023) to instruction-tune an LM on the Alpaca instruction-tuning data with top retrieved documents inserted before instructions, and ToolformerÂ (Schick etÂ al., 2023) to pre-train an LM with API calls (e.g., Wikipedia APIs).666We report numbers using the results reported in the paper as the implementations are not available.
+
+
+
+
+4.3 Experimental settings
+
+Training data and settings.
+Our training data consists of diverse instruction-following input-output pairs.
+In particular, we sample instances from Open-Instruct processed dataÂ (Wang etÂ al., 2023) and knowledge-intensive datasetsÂ (Petroni etÂ al., 2021; Stelmakh etÂ al., 2022; Mihaylov etÂ al., 2018).
+In total, we use 150k instruction-output pairs.
+We use Llama2 7B and 13BÂ (Touvron etÂ al., 2023) as our generator base LM, and we use Llama2 7B as our base critic LM.
+For the retriever model â„›â„›\mathcal{R}caligraphic_R, we use off-the-shelf Contriever-MS MARCOÂ (Izacard etÂ al., 2022a) by default and retrieve up to ten documents for each input.
+More training details are in the Appendix SectionÂ B.1.
+
+
+Inference settings.
+As a default configuration, we assign the weight terms 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsRel
+
+, 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+
+, 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsUse
+
+values of 1.0, 1.0 and 0.5, respectively.
+To encourage frequent retrieval, we set the retrieval threshold to 0.2 for most tasks and to 0 for ALCEÂ (Gao etÂ al., 2023) due to citation requirements.
+We speed up inference using vllmÂ (Kwon etÂ al., 2023).
+At each segment level, we adopt a beam width of 2.
+For a token-level generation, we use greedy decoding.
+By default, we use the top five documents from Contriever-MS MARCOÂ (Izacard etÂ al., 2022a); for biographies and open-domain QA, we use additional top five documents retrieved by a web search engine, followingÂ Luo etÂ al. (2023); for ASQA, we use the author-provided top 5 documents by GTR-XXLÂ (Ni etÂ al., 2022) across all baselines for a fair comparison.
+
+
+
+
+
+
+5 Results and Analysis
+
+Table 2: 
+Overall experiment results on six tasks. Bold numbers indicate the best performance among non-proprietary models, and gray-colored bold text indicates the best proprietary model when they outperforms all non-proprietary models.
+*{}^{*}start_FLOATSUPERSCRIPT * end_FLOATSUPERSCRIPT indicates concurrent or recent results reported by concurrent work. â€“ indicates numbers that are not reported by the original papers or are not applicable. Models are sorted based on scale. FS, em, rg, mau, prec, rec denote FactScore (factuality); str-em, rouge (correctness); MAUVE (fluency); citation precision and recall, respectively.
+
+
+
+
+
+Short-form
+Closed-set
+Long-form generations (with citations)
+
+
+
+PopQA
+TQA
+Pub
+ARC
+Bio
+ASQA
+
+
+LM
+(acc)
+(acc)
+(acc)
+(acc)
+(FS)
+(em)
+(rg)
+(mau)
+(pre)
+(rec)
+
+
+LMs with proprietary data
+
+
+Llama2-c13b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT
+
+20.0
+59.3
+49.4
+38.4
+55.9
+22.4
+29.6
+28.6
+â€“
+â€“
+
+
+Ret-Llama2-c13b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT
+
+51.8
+59.8
+52.1
+37.9
+79.9
+32.8
+34.8
+43.8
+19.8
+36.1
+
+
+ChatGPT
+29.3
+74.3
+70.1
+75.3
+71.8
+35.3
+36.2
+68.8
+â€“
+â€“
+
+
+Ret-ChatGPT
+50.8
+65.7
+54.7
+75.3
+â€“
+40.7
+39.9
+79.7
+65.1
+76.6
+
+
+Perplexity.ai
+â€“
+â€“
+â€“
+â€“
+71.2
+â€“
+â€“
+â€“
+â€“
+â€“
+
+
+Baselines without retrieval
+
+
+Llama27b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT
+
+14.7
+30.5
+34.2
+21.8
+44.5
+7.9
+15.3
+19.0
+â€“
+â€“
+
+
+Alpaca7b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT
+
+23.6
+54.5
+49.8
+45.0
+45.8
+18.8
+29.4
+61.7
+â€“
+â€“
+
+
+Llama213b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT
+
+14.7
+38.5
+29.4
+29.4
+53.4
+7.2
+12.4
+16.0
+â€“
+â€“
+
+
+Alpaca13b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT
+
+24.4
+61.3
+55.5
+54.9
+50.2
+22.9
+32.0
+70.6
+â€“
+â€“
+
+
+CoVE65b65b{}_{\textsc{65b}}start_FLOATSUBSCRIPT 65b end_FLOATSUBSCRIPT *
+â€“
+â€“
+â€“
+â€“
+71.2
+â€“
+â€“
+â€“
+â€“
+â€“
+
+
+Baselines with retrieval
+
+
+Toolformer*6b6b{}_{\textsc{6b}}start_FLOATSUBSCRIPT 6b end_FLOATSUBSCRIPT
+
+â€“
+48.8
+â€“
+â€“
+â€“
+â€“
+â€“
+â€“
+â€“
+â€“
+
+
+Llama27b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT
+
+38.2
+42.5
+30.0
+48.0
+78.0
+15.2
+22.1
+32.0
+2.9
+4.0
+
+
+Alpaca7b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT
+
+46.7
+64.1
+40.2
+48.0
+76.6
+30.9
+33.3
+57.9
+5.5
+7.2
+
+
+Llama2-FT7b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT
+
+48.7
+57.3
+64.3
+65.8
+78.2
+31.0
+35.8
+51.2
+5.0
+7.5
+
+
+SAIL*7b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT
+
+â€“
+â€“
+69.2
+48.4
+â€“
+â€“
+â€“
+â€“
+â€“
+â€“
+
+
+Llama213b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT
+
+45.7
+47.0
+30.2
+26.0
+77.5
+16.3
+20.5
+24.7
+2.3
+3.6
+
+
+Alpaca13b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT
+
+46.1
+66.9
+51.1
+57.6
+77.7
+34.8
+36.7
+56.6
+2.0
+3.8
+
+
+
+\hdashlineOur Self-Rag 7b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT
+
+54.9
+66.4
+72.4
+67.3
+81.2
+30.0
+35.7
+74.3
+66.9
+67.8
+
+
+
+Our Self-Rag 13b13b{}_{\textsc{13b}}start_FLOATSUBSCRIPT 13b end_FLOATSUBSCRIPT
+
+55.8
+69.3
+74.5
+73.1
+80.2
+31.7
+37.0
+71.6
+70.3
+71.3
+
+
+
+
+
+
+5.1 Main Results
+
+Comparison against baselines without retrieval. 
+TableÂ 2 (top) presents the baselines without retrieval.
+Our Self-Rag (bottom two rows) demonstrates a substantial performance advantage over supervised fine-tuned LLMs in all tasks and even outperforms ChatGPT in PubHealth, PopQA, biography generations, and ASQA (Rouge and MAUVE).
+Our approach also significantly outperforms a concurrent method that employs sophisticated prompt engineering; specifically, on the bio generation task, our 7B and 13B models outperform the concurrent CoVEÂ (Dhuliawala etÂ al., 2023), which iteratively prompts Llama265b65b{}_{\textsc{65b}}start_FLOATSUBSCRIPT 65b end_FLOATSUBSCRIPT to refine output.
+
+
+Comparison against baselines with retrieval.
+As shown in TablesÂ 2 (bottom), our Self-Rag also outperforms existing RAG in many tasks, obtaining the best performance among non-proprietary LM-based models on all tasks.
+While our method outperforms other baselines, on PopQA or Bio, powerful instruction-tuned LMs with retrieval (e.g., LLama2-chat, Alpaca) show large gains from their non-retrieval baselines.
+However, we found that these baselines provide limited solutions for tasks where we cannot simply copy or extract sub-strings of retrieved passages.
+On PubHealth and ARC-Challenge, baselines with retrieval do not improve performance notably from their no-retrieval counterparts.
+We also observe that most baselines with retrieval struggle to improve citation accuracy.
+On ASQA, our model shows significantly higher citation precision and recall than all models except ChatGPT.
+Gao etÂ al. (2023) found that ChatGPT consistently exhibits superior efficacy in this particular task, surpassing smaller LMs.
+
+Our Self-Rag bridges this performance gap, even outperforming ChatGPT in citation precision, which measures whether the model-generated claim is fully supported by cited evidence. 
+We also found that on the metrics for factual precision, Self-Rag 7B occasionally outperforms our 13B due to the tendency of smaller Self-Rag to often generate precisely grounded yet shorter outputs.
+
+Llama2-FT7b7b{}_{\textsc{7b}}start_FLOATSUBSCRIPT 7b end_FLOATSUBSCRIPT, which is the baseline LM trained on the same instruction-output pairs as Self-Rag without retrieval or self-reflection and is retrieval-augmented at test time only, lags behind Self-Rag. This result indicates Self-Rag gains are not solely from training data and demonstrate the effectiveness of Self-Rag framework.
+
+
+(a)  Ablation
+
+
+
+
+
+PQA
+Med
+AS
+
+
+
+(acc)
+(acc)
+(em)
+
+
+
+Self-Rag (50k)
+45.5
+73.5
+32.1
+
+
+
+\hdashlineTraining
+
+
+
+
+
+No Retriever â„›â„›\mathcal{R}caligraphic_R
+
+43.6
+67.8
+31.0
+
+
+No Critic ğ�’�ğ�’�\mathcal{C}caligraphic_C
+
+42.6
+72.0
+18.1
+
+
+
+\hdashlineTest
+
+
+
+
+
+No retrieval
+24.7
+73.0
+â€“
+
+
+Hard constraints
+28.3
+72.6
+â€“
+
+
+Retrieve top1
+41.8
+73.1
+28.6
+
+
+Remove 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsSup
+44.1
+73.2
+30.6
+
+
+
+
+
+
+
+(b) Customization
+
+
+
+
+(c) Retrieval
+
+
+
+
+
+
+
+(a)  Ablation
+(d) Analysis on Self-Rag: (a) Ablation studies for key components of Self-Rag training and inference based on our 7B model. (b) Effects of soft weights on ASQA citation precision and Mauve (fluency). (c) Retrieval frequency and normalized accuracy on PubHealth and PopQA. 
+Table 12:  Instructions and demonstrations for 
+\tikzmarknode[draw=myblue,thick,inner sep=2pt]test
+IsUse
+
+tokens. 
+
+
+
+
+
+
+Generated  on Tue Oct 17 18:21:18 2023 by LATExml
+
+
+
+
+
+
+
+
+
+HTML conversions sometimes display errors due to content that did not convert correctly from the source. This paper uses the following packages that are not yet supported by the HTML conversion tool. Feedback on these issues are not necessary; they are known and are being worked on.
+
+failed: mwe
+failed: titletoc
+failed: arydshln
+
+Authors: achieve the best HTML results from your LaTeX submissions by selecting from this list of supported packages.
+
+
+
+

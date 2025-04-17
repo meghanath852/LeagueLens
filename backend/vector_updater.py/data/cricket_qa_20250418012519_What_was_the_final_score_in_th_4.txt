@@ -1,0 +1,10 @@
+# Question
+What was the final score in the most recent IPL match?
+
+# Answer
+In the most recent IPL match on April 16, 2025, the Delhi Capitals faced the Rajasthan Royals, and the match ended in a tie, with both teams scoring 188 runs. The Delhi Capitals won the match in the Super Over.
+
+- **Delhi Capitals**: 188/4 in 20 overs
+- **Rajasthan Royals**: 188/5 in 20 overs
+
+For more details, you can check the full highlights [here](https://sportstar.thehindu.com/cricket/ipl/ipl-news/dc-vs-rr-live-score-super-over-updates-ipl-2025-delhi-capitals-rajasthan-royals/article69458074.ece).

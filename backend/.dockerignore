@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+
+# Docker-specific
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git
+.git/
+.github/
+.gitignore
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environments
+.env
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (optional - if these are too large and can be mounted as volumes)
+# *.csv
+# *.json 

@@ -1,0 +1,194 @@
+2025-04-17 04:49:45,464 - cricket_commentary - INFO - ElevenLabs client initialized
+2025-04-17 04:49:45,464 - cricket_commentary - INFO - Starting cricket commentary generator with TTS using openai provider and gpt-4o-mini model
+2025-04-17 04:49:45,479 - cricket_commentary - INFO - Commentary generator initialized with openai provider
+2025-04-17 04:49:45,479 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:49:45,479 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:49:48,352 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:49:48,363 - cricket_commentary.generator - INFO - Generated commentary (55 words)
+2025-04-17 04:49:48,364 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:49:48,364 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:49:48,364 - cricket_commentary - INFO - Starting audio playback (estimated duration: 22.0s)
+2025-04-17 04:49:48,365 - cricket_commentary - INFO - Waiting for 22.0 seconds before next commentary
+2025-04-17 04:49:49,271 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:49:49,272 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'detected_unusual_activity', 'message': 'Unusual activity detected. Free Tier usage disabled. If you are using a proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. \nPlease play fair and purchase any Paid Subscription to continue.'}}
+2025-04-17 04:50:10,375 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:50:10,376 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:50:12,518 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:50:12,520 - cricket_commentary.generator - INFO - Generated commentary (47 words)
+2025-04-17 04:50:12,522 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:50:12,522 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:50:12,523 - cricket_commentary - INFO - Starting audio playback (estimated duration: 18.8s)
+2025-04-17 04:50:12,530 - cricket_commentary - INFO - Waiting for 18.8 seconds before next commentary
+2025-04-17 04:50:13,077 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:50:13,078 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 285 credits are required for this request.'}}
+2025-04-17 04:50:31,339 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:50:31,341 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:50:33,407 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:50:33,409 - cricket_commentary.generator - INFO - Generated commentary (47 words)
+2025-04-17 04:50:33,410 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:50:33,410 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:50:33,410 - cricket_commentary - INFO - Starting audio playback (estimated duration: 18.8s)
+2025-04-17 04:50:33,410 - cricket_commentary - INFO - Waiting for 18.8 seconds before next commentary
+2025-04-17 04:50:34,021 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:50:34,022 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 263 credits are required for this request.'}}
+2025-04-17 04:50:52,217 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:50:52,218 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:50:53,786 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:50:53,788 - cricket_commentary.generator - INFO - Generated commentary (49 words)
+2025-04-17 04:50:53,790 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:50:53,790 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:50:53,790 - cricket_commentary - INFO - Starting audio playback (estimated duration: 19.6s)
+2025-04-17 04:50:53,791 - cricket_commentary - INFO - Waiting for 19.6 seconds before next commentary
+2025-04-17 04:50:54,398 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:50:54,399 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 285 credits are required for this request.'}}
+2025-04-17 04:51:13,396 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:51:13,398 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:51:15,699 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:51:15,700 - cricket_commentary.generator - INFO - Generated commentary (45 words)
+2025-04-17 04:51:15,702 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:51:15,702 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:51:15,702 - cricket_commentary - INFO - Starting audio playback (estimated duration: 18.0s)
+2025-04-17 04:51:15,702 - cricket_commentary - INFO - Waiting for 18.0 seconds before next commentary
+2025-04-17 04:51:16,312 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:51:16,314 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'detected_unusual_activity', 'message': 'Unusual activity detected. Free Tier usage disabled. If you are using a proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. \nPlease play fair and purchase any Paid Subscription to continue.'}}
+2025-04-17 04:51:33,710 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:51:33,712 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:51:35,979 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:51:35,982 - cricket_commentary.generator - INFO - Generated commentary (57 words)
+2025-04-17 04:51:35,984 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:51:35,984 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:51:35,984 - cricket_commentary - INFO - Starting audio playback (estimated duration: 22.8s)
+2025-04-17 04:51:35,985 - cricket_commentary - INFO - Waiting for 22.8 seconds before next commentary
+2025-04-17 04:51:36,588 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:51:36,590 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 332 credits are required for this request.'}}
+2025-04-17 04:51:58,787 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:51:58,790 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:52:00,553 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:52:00,554 - cricket_commentary.generator - INFO - Generated commentary (49 words)
+2025-04-17 04:52:00,557 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:52:00,557 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:52:00,557 - cricket_commentary - INFO - Starting audio playback (estimated duration: 19.6s)
+2025-04-17 04:52:00,557 - cricket_commentary - INFO - Waiting for 19.6 seconds before next commentary
+2025-04-17 04:52:01,062 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:52:01,063 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 273 credits are required for this request.'}}
+2025-04-17 04:52:20,149 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:52:20,150 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:52:21,618 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:52:21,622 - cricket_commentary.generator - INFO - Generated commentary (49 words)
+2025-04-17 04:52:21,625 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:52:21,625 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:52:21,625 - cricket_commentary - INFO - Starting audio playback (estimated duration: 19.6s)
+2025-04-17 04:52:21,626 - cricket_commentary - INFO - Waiting for 19.6 seconds before next commentary
+2025-04-17 04:52:22,346 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:52:22,348 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 291 credits are required for this request.'}}
+2025-04-17 04:52:41,233 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:52:41,234 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:52:43,353 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:52:43,366 - cricket_commentary.generator - INFO - Generated commentary (47 words)
+2025-04-17 04:52:43,368 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:52:43,368 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:52:43,368 - cricket_commentary - INFO - Starting audio playback (estimated duration: 18.8s)
+2025-04-17 04:52:43,368 - cricket_commentary - INFO - Waiting for 18.8 seconds before next commentary
+2025-04-17 04:52:43,936 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:52:43,937 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 271 credits are required for this request.'}}
+2025-04-17 04:53:02,171 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:53:02,173 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:53:04,180 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:53:04,188 - cricket_commentary.generator - INFO - Generated commentary (48 words)
+2025-04-17 04:53:04,190 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:53:04,190 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:53:04,190 - cricket_commentary - INFO - Starting audio playback (estimated duration: 19.2s)
+2025-04-17 04:53:04,191 - cricket_commentary - INFO - Waiting for 19.2 seconds before next commentary
+2025-04-17 04:53:04,755 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:53:04,756 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 265 credits are required for this request.'}}
+2025-04-17 04:53:23,398 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:53:23,399 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:53:25,216 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:53:25,219 - cricket_commentary.generator - INFO - Generated commentary (60 words)
+2025-04-17 04:53:25,222 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:53:25,222 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:53:25,222 - cricket_commentary - INFO - Starting audio playback (estimated duration: 24.0s)
+2025-04-17 04:53:25,223 - cricket_commentary - INFO - Waiting for 24.0 seconds before next commentary
+2025-04-17 04:53:25,933 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:53:25,934 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 343 credits are required for this request.'}}
+2025-04-17 04:53:49,230 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:53:49,231 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:53:51,495 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:53:51,498 - cricket_commentary.generator - INFO - Generated commentary (53 words)
+2025-04-17 04:53:51,500 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:53:51,500 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:53:51,500 - cricket_commentary - INFO - Starting audio playback (estimated duration: 21.2s)
+2025-04-17 04:53:51,501 - cricket_commentary - INFO - Waiting for 21.2 seconds before next commentary
+2025-04-17 04:53:52,010 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:53:52,011 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 303 credits are required for this request.'}}
+2025-04-17 04:54:12,704 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:54:12,705 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:54:14,166 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:54:14,169 - cricket_commentary.generator - INFO - Generated commentary (44 words)
+2025-04-17 04:54:14,171 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:54:14,171 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:54:14,171 - cricket_commentary - INFO - Starting audio playback (estimated duration: 17.6s)
+2025-04-17 04:54:14,172 - cricket_commentary - INFO - Waiting for 17.6 seconds before next commentary
+2025-04-17 04:54:14,689 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:54:14,691 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 272 credits are required for this request.'}}
+2025-04-17 04:54:31,781 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:54:31,781 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:54:33,315 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:54:33,317 - cricket_commentary.generator - INFO - Generated commentary (53 words)
+2025-04-17 04:54:33,319 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:54:33,319 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:54:33,319 - cricket_commentary - INFO - Starting audio playback (estimated duration: 21.2s)
+2025-04-17 04:54:33,320 - cricket_commentary - INFO - Waiting for 21.2 seconds before next commentary
+2025-04-17 04:54:33,877 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:54:33,878 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'detected_unusual_activity', 'message': 'Unusual activity detected. Free Tier usage disabled. If you are using a proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. \nPlease play fair and purchase any Paid Subscription to continue.'}}
+2025-04-17 04:54:54,525 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:54:54,526 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:54:56,251 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:54:56,253 - cricket_commentary.generator - INFO - Generated commentary (56 words)
+2025-04-17 04:54:56,255 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:54:56,255 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:54:56,255 - cricket_commentary - INFO - Starting audio playback (estimated duration: 22.4s)
+2025-04-17 04:54:56,256 - cricket_commentary - INFO - Waiting for 22.4 seconds before next commentary
+2025-04-17 04:54:57,173 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:54:57,174 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 327 credits are required for this request.'}}
+2025-04-17 04:55:18,663 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:55:18,664 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:55:20,680 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:55:20,683 - cricket_commentary.generator - INFO - Generated commentary (60 words)
+2025-04-17 04:55:20,685 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:55:20,686 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:55:20,686 - cricket_commentary - INFO - Starting audio playback (estimated duration: 24.0s)
+2025-04-17 04:55:20,686 - cricket_commentary - INFO - Waiting for 24.0 seconds before next commentary
+2025-04-17 04:55:22,270 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:55:22,272 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 354 credits are required for this request.'}}
+2025-04-17 04:55:44,695 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:55:44,697 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:55:46,531 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:55:46,534 - cricket_commentary.generator - INFO - Generated commentary (49 words)
+2025-04-17 04:55:46,536 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:55:46,536 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:55:46,536 - cricket_commentary - INFO - Starting audio playback (estimated duration: 19.6s)
+2025-04-17 04:55:46,537 - cricket_commentary - INFO - Waiting for 19.6 seconds before next commentary
+2025-04-17 04:55:47,043 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:55:47,045 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'detected_unusual_activity', 'message': 'Unusual activity detected. Free Tier usage disabled. If you are using a proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. \nPlease play fair and purchase any Paid Subscription to continue.'}}
+2025-04-17 04:56:06,145 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:56:06,146 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:56:08,137 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:56:08,139 - cricket_commentary.generator - INFO - Generated commentary (69 words)
+2025-04-17 04:56:08,143 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:56:08,143 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:56:08,143 - cricket_commentary - INFO - Starting audio playback (estimated duration: 27.6s)
+2025-04-17 04:56:08,144 - cricket_commentary - INFO - Waiting for 27.6 seconds before next commentary
+2025-04-17 04:56:08,655 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:56:08,656 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'detected_unusual_activity', 'message': 'Unusual activity detected. Free Tier usage disabled. If you are using a proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. \nPlease play fair and purchase any Paid Subscription to continue.'}}
+2025-04-17 04:56:35,750 - cricket_commentary - INFO - Generating new commentary...
+2025-04-17 04:56:35,752 - cricket_commentary.generator - INFO - Generating commentary with gpt-4o-mini via openai...
+2025-04-17 04:56:37,425 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-04-17 04:56:37,427 - cricket_commentary.generator - INFO - Generated commentary (67 words)
+2025-04-17 04:56:37,429 - cricket_commentary.generator - INFO - Commentary saved to history file
+2025-04-17 04:56:37,429 - cricket_commentary - INFO - Converting commentary to speech...
+2025-04-17 04:56:37,430 - cricket_commentary - INFO - Starting audio playback (estimated duration: 26.8s)
+2025-04-17 04:56:37,430 - cricket_commentary - INFO - Waiting for 26.8 seconds before next commentary
+2025-04-17 04:56:38,038 - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/JJQDkHrp6uKU5Vk0WKhY/stream "HTTP/1.1 401 Unauthorized"
+2025-04-17 04:56:38,040 - cricket_commentary - ERROR - Error during audio streaming: status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 248 credits remaining, while 382 credits are required for this request.'}}
+2025-04-17 04:57:02,591 - cricket_commentary - INFO - Commentary generator stopped by user
