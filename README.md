@@ -7,7 +7,7 @@
 
 2. Clone this repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/meghanath852/frontendcharp.git
    cd frontendcharp
    ```
 
